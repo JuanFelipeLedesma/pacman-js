@@ -17,9 +17,23 @@ class Pacman {
     moveProcess() {
         this.changeDirectionIfPossible();
         this.moveForwards();
+        this.handleTunneling();
         if (this.checkCollisions()) {
             this.moveBackwards();
             return;
+        }
+    }
+
+    handleTunneling() {
+        if (this.x >= canvas.width) {
+            this.x = 0;
+        } else if (this.x < 0) {
+            this.x = canvas.width - this.width;
+        }
+        if (this.y >= canvas.height) {
+            this.y = 0;
+        } else if (this.y < 0) {
+            this.y = canvas.height - this.height;
         }
     }
 
@@ -75,18 +89,10 @@ class Pacman {
     checkCollisions() {
         let isCollided = false;
         if (
-            map[parseInt(this.y / oneBlockSize)][
-                parseInt(this.x / oneBlockSize)
-            ] == 1 ||
-            map[parseInt(this.y / oneBlockSize + 0.9999)][
-                parseInt(this.x / oneBlockSize)
-            ] == 1 ||
-            map[parseInt(this.y / oneBlockSize)][
-                parseInt(this.x / oneBlockSize + 0.9999)
-            ] == 1 ||
-            map[parseInt(this.y / oneBlockSize + 0.9999)][
-                parseInt(this.x / oneBlockSize + 0.9999)
-            ] == 1
+            map[parseInt(this.y / oneBlockSize)][parseInt(this.x / oneBlockSize)] == 1 ||
+            map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize)] == 1 ||
+            map[parseInt(this.y / oneBlockSize)][parseInt(this.x / oneBlockSize + 0.9999)] == 1 ||
+            map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize + 0.9999)] == 1
         ) {
             isCollided = true;
         }
@@ -126,7 +132,6 @@ class Pacman {
 
     getMapY() {
         let mapY = parseInt(this.y / oneBlockSize);
-
         return mapY;
     }
 
