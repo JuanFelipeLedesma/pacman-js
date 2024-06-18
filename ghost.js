@@ -32,24 +32,19 @@ class Ghost {
     isInRange() {
         let xDistance = Math.abs(pacman.getMapX() - this.getMapX());
         let yDistance = Math.abs(pacman.getMapY() - this.getMapY());
-        if (
-            Math.sqrt(xDistance * xDistance + yDistance * yDistance) <=
-            this.range
-        ) {
-            return true;
-        }
-        return false;
+        return Math.sqrt(xDistance * xDistance + yDistance * yDistance) <= this.range;
     }
 
     changeRandomDirection() {
         let addition = 1;
         this.randomTargetIndex += addition;
         this.randomTargetIndex = this.randomTargetIndex % 4;
+        this.target = randomTargetsForGhosts[this.randomTargetIndex];
     }
 
     moveProcess() {
         if (this.isInRange()) {
-            this.target = pacman;
+            this.target = { x: pacman.x, y: pacman.y };
         } else {
             this.target = randomTargetsForGhosts[this.randomTargetIndex];
         }
@@ -57,22 +52,22 @@ class Ghost {
         this.moveForwards();
         if (this.checkCollisions()) {
             this.moveBackwards();
-            return;
+            this.changeRandomDirection();
         }
     }
 
     moveBackwards() {
         switch (this.direction) {
-            case 4: // Right
+            case DIRECTION_RIGHT:
                 this.x -= this.speed;
                 break;
-            case 3: // Up
+            case DIRECTION_UP:
                 this.y += this.speed;
                 break;
-            case 2: // Left
+            case DIRECTION_LEFT:
                 this.x += this.speed;
                 break;
-            case 1: // Bottom
+            case DIRECTION_BOTTOM:
                 this.y -= this.speed;
                 break;
         }
@@ -80,16 +75,16 @@ class Ghost {
 
     moveForwards() {
         switch (this.direction) {
-            case 4: // Right
+            case DIRECTION_RIGHT:
                 this.x += this.speed;
                 break;
-            case 3: // Up
+            case DIRECTION_UP:
                 this.y -= this.speed;
                 break;
-            case 2: // Left
+            case DIRECTION_LEFT:
                 this.x -= this.speed;
                 break;
-            case 1: // Bottom
+            case DIRECTION_BOTTOM:
                 this.y += this.speed;
                 break;
         }
@@ -98,18 +93,10 @@ class Ghost {
     checkCollisions() {
         let isCollided = false;
         if (
-            map[parseInt(this.y / oneBlockSize)][
-                parseInt(this.x / oneBlockSize)
-            ] == 1 ||
-            map[parseInt(this.y / oneBlockSize + 0.9999)][
-                parseInt(this.x / oneBlockSize)
-            ] == 1 ||
-            map[parseInt(this.y / oneBlockSize)][
-                parseInt(this.x / oneBlockSize + 0.9999)
-            ] == 1 ||
-            map[parseInt(this.y / oneBlockSize + 0.9999)][
-                parseInt(this.x / oneBlockSize + 0.9999)
-            ] == 1
+            map[parseInt(this.y / oneBlockSize)][parseInt(this.x / oneBlockSize)] == 1 ||
+            map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize)] == 1 ||
+            map[parseInt(this.y / oneBlockSize)][parseInt(this.x / oneBlockSize + 0.9999)] == 1 ||
+            map[parseInt(this.y / oneBlockSize + 0.9999)][parseInt(this.x / oneBlockSize + 0.9999)] == 1
         ) {
             isCollided = true;
         }
@@ -129,8 +116,7 @@ class Ghost {
         }
         if (
             this.getMapY() != this.getMapYRightSide() &&
-            (this.direction == DIRECTION_LEFT ||
-                this.direction == DIRECTION_RIGHT)
+            (this.direction == DIRECTION_LEFT || this.direction == DIRECTION_RIGHT)
         ) {
             this.direction = DIRECTION_UP;
         }
@@ -147,7 +133,6 @@ class Ghost {
         } else {
             this.moveBackwards();
         }
-        console.log(this.direction);
     }
 
     calculateNewDirection(map, destX, destY) {
@@ -178,7 +163,7 @@ class Ghost {
             }
         }
 
-        return 1; // direction
+        return DIRECTION_RIGHT; // Default direction
     }
 
     addNeighbors(poped, mp) {
@@ -188,7 +173,6 @@ class Ghost {
 
         if (
             poped.x - 1 >= 0 &&
-            poped.x - 1 < numOfRows &&
             mp[poped.y][poped.x - 1] != 1
         ) {
             let tempMoves = poped.moves.slice();
@@ -196,8 +180,7 @@ class Ghost {
             queue.push({ x: poped.x - 1, y: poped.y, moves: tempMoves });
         }
         if (
-            poped.x + 1 >= 0 &&
-            poped.x + 1 < numOfRows &&
+            poped.x + 1 < numOfColumns &&
             mp[poped.y][poped.x + 1] != 1
         ) {
             let tempMoves = poped.moves.slice();
@@ -206,7 +189,6 @@ class Ghost {
         }
         if (
             poped.y - 1 >= 0 &&
-            poped.y - 1 < numOfColumns &&
             mp[poped.y - 1][poped.x] != 1
         ) {
             let tempMoves = poped.moves.slice();
@@ -214,8 +196,7 @@ class Ghost {
             queue.push({ x: poped.x, y: poped.y - 1, moves: tempMoves });
         }
         if (
-            poped.y + 1 >= 0 &&
-            poped.y + 1 < numOfColumns &&
+            poped.y + 1 < numOfRows &&
             mp[poped.y + 1][poped.x] != 1
         ) {
             let tempMoves = poped.moves.slice();
@@ -226,28 +207,19 @@ class Ghost {
     }
 
     getMapX() {
-        let mapX = parseInt(this.x / oneBlockSize);
-        return mapX;
+        return parseInt(this.x / oneBlockSize);
     }
 
     getMapY() {
-        let mapY = parseInt(this.y / oneBlockSize);
-        return mapY;
+        return parseInt(this.y / oneBlockSize);
     }
 
     getMapXRightSide() {
-        let mapX = parseInt((this.x * 0.99 + oneBlockSize) / oneBlockSize);
-        return mapX;
+        return parseInt((this.x + this.width - 1) / oneBlockSize);
     }
 
     getMapYRightSide() {
-        let mapY = parseInt((this.y * 0.99 + oneBlockSize) / oneBlockSize);
-        return mapY;
-    }
-
-    changeAnimation() {
-        this.currentFrame =
-            this.currentFrame == this.frameCount ? 1 : this.currentFrame + 1;
+        return parseInt((this.y + this.height - 1) / oneBlockSize);
     }
 
     draw() {
@@ -264,16 +236,6 @@ class Ghost {
             this.height
         );
         canvasContext.restore();
-        canvasContext.beginPath();
-        canvasContext.strokeStyle = "red";
-        canvasContext.arc(
-            this.x + oneBlockSize / 2,
-            this.y + oneBlockSize / 2,
-            this.range * oneBlockSize,
-            0,
-            2 * Math.PI
-        );
-        canvasContext.stroke();
     }
 }
 
