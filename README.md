@@ -47,3 +47,24 @@ The original game was developed by [Original Developer's Name] and had several f
 1. Clone this repository to your local machine.
    ```bash
    git clone https://github.com/your-repo/pacman-game.git
+
+2. Open the pacman.html file in your web browser to start playing the game.
+
+## Technologies Used
+- JavaScript: Game logic and functionality.
+- HTML: Game structure and canvas element.
+- CSS: Basic styling for the game.
+
+## Contributions
+We have made significant improvements to the original code, fixing bugs and adding new features. This project demonstrates our ability to:
+
+- Debug and enhance existing JavaScript code.
+- Work with HTML and CSS to create a seamless user experience.
+- Implement classic game features such as tunneling and automated resets.
+
+## Credits
+Original game developed by @servetgulnaroglu.
+Improvements and bug fixes by Juan Felipe Ledesma.
+
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
