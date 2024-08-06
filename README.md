@@ -4,7 +4,7 @@ This project is a classic Pac-Man game developed in JavaScript, HTML, and CSS. T
 
 ## Original Game Source
 
-The original game was developed by [Original Developer's Name] and had several functionalities in place. However, there were a few bugs and issues that needed to be addressed to ensure smooth gameplay.
+The original game was developed by [@servetgulnaroglu and had several functionalities in place. However, there were a few bugs and issues that needed to be addressed to ensure smooth gameplay.
 
 ## Bug Fixes and Enhancements
 
